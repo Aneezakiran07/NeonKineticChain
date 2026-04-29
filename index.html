@@ -8,6 +8,75 @@
 </head>
 <body>
   <canvas id="canvas"></canvas>
+
+  <div class="hud">
+    <span class="hud-label">SPEED</span>
+    <div class="hud-bar"><div class="hud-fill" id="speedBar"></div></div>
+    <span class="hud-label">HEAT</span>
+    <div class="hud-bar"><div class="hud-fill hot" id="heatBar"></div></div>
+  </div>
+
+  <button class="readme-btn" id="readmeBtn" aria-label="Open readme">?</button>
+
+  <div class="dialog-backdrop" id="backdrop" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+    <div class="dialog">
+      <div class="dialog-header">
+        <span class="dialog-title" id="dialogTitle">Neon Kinetic Chain</span>
+        <button class="dialog-close" id="closeBtn" aria-label="Close">&#x2715;</button>
+      </div>
+      <div class="dialog-body">
+
+        <p class="dialog-intro">
+          Move your mouse. A glowing rope follows it with real physics. The faster you move, the hotter it burns.
+        </p>
+
+        <div class="dialog-section">
+          <h2>What is this?</h2>
+          <p>A canvas toy that simulates a neon chain using physics. It reacts to your mouse speed in real time. Slow movement looks like a cool laser. Fast circles and whips create loops, spirals, and heat.</p>
+        </div>
+
+        <div class="dialog-section">
+          <h2>Physics: Verlet Integration</h2>
+          <p>Each dot in the chain remembers where it was one frame ago. Instead of storing velocity directly, the simulation subtracts the previous position from the current one to compute motion. This stays stable even with lots of forces applied.</p>
+        </div>
+
+        <div class="dialog-section">
+          <h2>Constraints: Why the chain holds together</h2>
+          <p>After every physics step, a constraint solver runs six times. It checks the distance between each pair of neighboring dots and corrects them until they sit exactly one segment length apart. This stops the chain from stretching or bunching.</p>
+        </div>
+
+        <div class="dialog-section">
+          <h2>Rendering: Multi-pass Glow</h2>
+          <p>The chain is drawn three times per frame. A wide faint pass, a tighter mid-glow, and a sharp bright core. Together they fake neon bloom without CSS blur filters, keeping performance smooth.</p>
+        </div>
+
+        <div class="dialog-section">
+          <h2>Heat color</h2>
+          <p>At rest the chain is deep blue. As speed increases the color interpolates toward hot pink. This is linear interpolation on the RGB channels separately. The value is smoothed across frames so transitions feel fluid.</p>
+        </div>
+
+        <div class="dialog-section">
+          <h2>Motion trails</h2>
+          <p>Instead of clearing the canvas each frame, a semi-transparent dark rectangle is painted over it. Old lines fade out slowly, creating the glowing trail behind the chain head.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
   <script src="main.js"></script>
+  <script>
+    const btn      = document.getElementById('readmeBtn')
+    const backdrop = document.getElementById('backdrop')
+    const closeBtn = document.getElementById('closeBtn')
+
+    function openDialog()  { backdrop.classList.add('open') }
+    function closeDialog() { backdrop.classList.remove('open') }
+
+    btn.addEventListener('click', openDialog)
+    closeBtn.addEventListener('click', closeDialog)
+    backdrop.addEventListener('click', e => { if (e.target === backdrop) closeDialog() })
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDialog() })
+  </script>
 </body>
 </html>
